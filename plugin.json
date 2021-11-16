@@ -1,5 +1,5 @@
 {
-    "id": "com.mattermost.plugin-fontsizR",
+    "id": "com.mattermost.plugin-fontsizr",
     "name": "Font SizR",
     "description": "This plugin allows you to change font size.",
     "webapp": {
