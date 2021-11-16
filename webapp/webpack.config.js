@@ -5,11 +5,12 @@ const path = require('path');
 const PLUGIN_ID = require('../plugin.json').id;
 
 const NPM_TARGET = process.env.npm_lifecycle_event; //eslint-disable-line no-process-env
+const targetIsDevServer = NPM_TARGET === 'dev-server';
 let mode = 'production';
-let devtool = '';
-if (NPM_TARGET === 'debug' || NPM_TARGET === 'debug:watch') {
+let devtool = 'source-map';
+if (NPM_TARGET === 'debug' || NPM_TARGET === 'debug:watch' || targetIsDevServer) {
     mode = 'development';
-    devtool = 'source-map';
+    devtool = 'eval-cheap-module-source-map';
 }
 
 const plugins = [];
@@ -34,15 +35,19 @@ if (NPM_TARGET === 'build:watch' || NPM_TARGET === 'debug:watch') {
     });
 }
 
-module.exports = {
+let config = {
     entry: [
         './src/index.tsx',
     ],
     resolve: {
+        alias: {
+            src: path.resolve(__dirname, './src/'),
+            'mattermost-redux': path.resolve(__dirname, './node_modules/mattermost-webapp/packages/mattermost-redux/src/'),
+            reselect: path.resolve(__dirname, './node_modules/mattermost-webapp/packages/reselect/src/index'),
+        },
         modules: [
             'src',
             'node_modules',
-            path.resolve(__dirname),
         ],
         extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
     },
@@ -50,7 +55,7 @@ module.exports = {
         rules: [
             {
                 test: /\.(js|jsx|ts|tsx)$/,
-                exclude: /node_modules/,
+                exclude: /node_modules\/(?!(mattermost-webapp)\/).*/,
                 use: {
                     loader: 'babel-loader',
                     options: {
@@ -61,7 +66,7 @@ module.exports = {
                 },
             },
             {
-                test: /\.(scss|css)$/,
+                test: /\.scss$/,
                 use: [
                     'style-loader',
                     {
@@ -69,10 +74,31 @@ module.exports = {
                     },
                     {
                         loader: 'sass-loader',
+                    },
+                ],
+            },
+            {
+                test: /\.(png|eot|tiff|svg|woff2|woff|ttf|gif|mp3|jpg)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
                         options: {
-                            sassOptions: {
-                                includePaths: ['node_modules/compass-mixins/lib', 'sass'],
-                            },
+                            name: 'files/[contenthash].[ext]',
+                        },
+                    },
+                    {
+                        loader: 'image-webpack-loader',
+                        options: {},
+                    },
+                ],
+            },
+            {
+                test: /\.apng$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: 'files/[contenthash].[ext]',
                         },
                     },
                 ],
@@ -86,6 +112,7 @@ module.exports = {
         'prop-types': 'PropTypes',
         'react-bootstrap': 'ReactBootstrap',
         'react-router-dom': 'ReactRouterDom',
+        'react-intl': 'ReactIntl',
     },
     output: {
         devtoolNamespace: PLUGIN_ID,
@@ -97,3 +124,38 @@ module.exports = {
     mode,
     plugins,
 };
+
+if (targetIsDevServer) {
+    config = {
+        ...config,
+        devServer: {
+            hot: true,
+            injectHot: true,
+            liveReload: false,
+            overlay: false,
+            proxy: [{
+                context: () => true,
+                bypass(req) {
+                    if (req.url.indexOf('/static/plugins/playbooks/') === 0) {
+                        return '/main.js'; // return the webpacked asset
+                    }
+                    return null;
+                },
+                logLevel: 'silent',
+                target: 'http://localhost:8065',
+                xfwd: true,
+                ws: true,
+            }],
+            port: 9005,
+            watchContentBase: true,
+            writeToDisk: false,
+        },
+        performance: false,
+        optimization: {
+            ...config.optimization,
+            splitChunks: false,
+        },
+    };
+}
+
+module.exports = config;
