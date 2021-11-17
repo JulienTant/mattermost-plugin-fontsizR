@@ -1,10 +1,10 @@
 import {GlobalState} from 'mattermost-redux/types/store';
 
 import {pluginId} from './manifest';
-import {FontSizRPluginState} from './reducers';
+import {FontSizerPluginState} from './reducers';
 
 // @ts-ignore
-const pluginState = (state: GlobalState): FontSizRPluginState => state['plugins-' + pluginId as keyof GlobalState] as FontSizRPluginState || {} as FontSizRPluginState;
+const pluginState = (state: GlobalState): FontSizerPluginState => state['plugins-' + pluginId as keyof GlobalState] as FontSizerPluginState || {} as FontSizerPluginState;
 
 export const getFontSize = (state: GlobalState): number => {
     return pluginState(state).fontSize;

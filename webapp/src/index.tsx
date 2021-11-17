@@ -8,16 +8,17 @@ import {GlobalState} from 'mattermost-redux/types/store';
 
 import {tickFontSizeAction, setFontSizeAction} from './actions';
 import reducer from './reducers';
-import FontSizRStyle from './components/FontSizRStyle';
+import FontSizerStyle from './components/FontSizerStyle';
 import {getFontSize} from './selectors';
 import {pluginId} from './manifest';
 
 const LOCAL_STORAGE_KEY_FONT_SIZE = pluginId + ':font_size';
 
-class FontSizRPlugin {
+class FontSizerPlugin {
     initialize(registry: PluginRegistry, store: Store<GlobalState>): void {
-        document.body.classList.add('plugin-fontsizr');
-        registry.registerRootComponent(FontSizRStyle);
+        // eslint-disable-next-line no-console
+        document.body.classList.add('plugin-fontsizer');
+        registry.registerRootComponent(FontSizerStyle);
         registry.registerReducer(reducer);
         registry.registerTranslations((locale: string) => {
             try {
@@ -50,9 +51,9 @@ class FontSizRPlugin {
     }
 
     uninitialize() {
-        document.body.classList.remove('plugin-fontsizr');
+        document.body.classList.remove('plugin-fontsizer');
     }
 }
 
 // @ts-ignore
-window.registerPlugin('com.mattermost.plugin-fontsizr', new FontSizRPlugin());
+window.registerPlugin(pluginId, new FontSizerPlugin());

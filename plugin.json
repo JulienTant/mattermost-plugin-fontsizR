@@ -1,7 +1,7 @@
 {
-    "id": "com.mattermost.plugin-fontsizr",
-    "name": "Font SizR",
-    "description": "This plugin allows you to change font size.",
+    "id": "fr.craftyx.mattermost.plugin-fontsizer",
+    "name": "Font Sizer",
+    "description": "This plugin allows you to change font size of posts.",
     "webapp": {
         "bundle_path": "webapp/dist/main.js"
     }

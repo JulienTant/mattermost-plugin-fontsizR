@@ -4,15 +4,15 @@ import {GlobalState} from '@mattermost/webapp/types/store/index';
 
 import {getFontSize} from '../selectors';
 
-const FontSizRStyle = () => {
+const FontSizerStyle = () => {
     const fontSize = useSelector((state: GlobalState) => getFontSize(state));
 
     return (
         <style>{`
-body.plugin-fontsizr .post p {
+body.plugin-fontsizer .post p {
 font-size: ` + fontSize + `px;
 }`}</style>
     );
 };
 
-export default FontSizRStyle;
+export default FontSizerStyle;

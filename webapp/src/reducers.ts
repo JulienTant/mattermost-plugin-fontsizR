@@ -31,4 +31,4 @@ const reducer = combineReducers({
 
 export default reducer;
 
-export type FontSizRPluginState = ReturnType<typeof reducer>;
+export type FontSizerPluginState = ReturnType<typeof reducer>;
