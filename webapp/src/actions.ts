@@ -1,5 +1,4 @@
-import {TICK_FONT_SIZE, ReceivedTickFontSizeAction, ReceivedSetFontSizeAction, SET_FONT_SIZE} from './types/actions'
-
+import {TICK_FONT_SIZE, ReceivedTickFontSizeAction, ReceivedSetFontSizeAction, SET_FONT_SIZE} from './types/actions';
 
 export function tickFontSizeAction(): ReceivedTickFontSizeAction {
     return {type: TICK_FONT_SIZE};
